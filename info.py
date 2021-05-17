@@ -9,7 +9,7 @@ class App:
         self.data_melted = data_melted
         self.text = """
         Diese Applikation stellt die neuesten Impfzahlen der Stadt Basel in einer Zeitreihe dar und erlaubt einfache Prognosen für den Zeitpunkt, an dem 
-        ein definierter Anteil der Basler Bevölkerung geimpft sein sollte. Die Zahl der zu impfenden Personen hängt von zwei Faktoren ab:
+        ein bestimmter Anteil der Basler Bevölkerung geimpft sein sollte. Die Zahl der zu impfenden Personen hängt weitgehend von zwei Faktoren ab:
 - Wieviele Personen, resp. welche Altersklassen (oder Kinder ab welchem Alter), werden für die Impfung zugelassen?
 - Wieviele der, für die Impfung zugelassenen Personen, entscheiden sich für die Impfung?
 

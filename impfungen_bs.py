@@ -22,7 +22,7 @@ class App:
         self.pop_dic = self.get_pop_data()
         self.impfbereite_szenario = ''
         self.impfbereite_eff = 0
-        locale.setlocale(locale.LC_ALL, 'de-ch')
+        locale.setlocale(locale.LC_ALL, '')
         
 
     def get_text(self, key:str, sum_d1, sum_d2, sum_tot, d1_100pz, d2_100pz):
@@ -36,9 +36,9 @@ class App:
             Chancen, dass die Herdenimmunität erreicht wird.
             """
         else:
-            text_threshold += f""" und sie wird somit nach Impfen aller Impfbereiten um {"{:,d}".format(int(self.impfbereite_eff - self.pop_dic['100% Bevölkerung'] * 0.8))} unterschritten. Zum Erreichen einer 
-            Herdenimmunität müssen weitere Altersklassen für die Impfung zugelassen werden, und/oder der Anteil der Impfberechtigten muss erhöht werden. Sie können den benötigten Anteil der
-            Impfwilligen Personen eruieren, indem sie den Anteil im Navigationsbereich am linken Rand erhöhen. 
+            text_threshold += f""" und sie wird somit nach Impfen aller impfbereiten Personen um {"{:,d}".format(int(self.impfbereite_eff - self.pop_dic['100% Bevölkerung'] * 0.8))} unterschritten. Zum Erreichen einer 
+            Herdenimmunität müssen weitere Altersklassen für die Impfung zugelassen werden, und/oder der Anteil der Impfwilligen muss erhöht werden. Sie können den benötigten Anteil der
+            impfwilligen Personen eruieren, indem sie den Anteil im Navigationsbereich am linken Rand verändern. 
             """
 
         text['verlauf'] = f"""Es wurden bis heute {self.status_total} Dosen verabreicht, {"{:,d}".format(self.status_dosis1)} Personen wurden einmal geimpft, {"{:,d}".format(self.status_dosis2)} 
