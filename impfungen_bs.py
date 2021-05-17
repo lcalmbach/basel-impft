@@ -37,13 +37,13 @@ class App:
             Chancen, dass die Herdenimmunität im Kanton erreicht wird.
             """
         else:
-            text_threshold += f""" und sie wird somit nach Impfen aller impfbereiten Personen um {"{:,d}".format(int(self.impfbereite_eff - self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100))} unterschritten. Zum Erreichen einer 
+            text_threshold += f""" und sie wird somit nach Impfen aller impfbereiten Personen um {"{:,d}".format(int(self.impfbereite_eff - self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100))} immer noch unterschritten. Zum Erreichen der 
             Herdenimmunität im Kanton müssen weitere Altersklassen für die Impfung zugelassen werden, und/oder der Anteil der Impfwilligen muss erhöht werden. Sie können den benötigten Anteil der
-            impfwilligen Personen eruieren, indem sie deren Anteil im Navigationsbereich am linken Rand erhöhen bis bis dass die Linie der Impfwilligen die Herdenimmunitäts-Linie überdeckt. 
+            impfwilligen Personen eruieren, indem sie deren Anteil im Navigationsbereich am linken Rand erhöhen, bis dass die Linie der Impfwilligen die Herdenimmunitäts-Linie überdeckt. 
             """
 
         text['verlauf'] = f"""Es wurden bis heute {"{:,d}".format(self.status_total)} Dosen verabreicht, {"{:,d}".format(self.status_dosis1)} Personen wurden einmal geimpft, {"{:,d}".format(self.status_dosis2)} 
-        Personen haben bereits eine zweite Impfung erhalten. Die Rate der über die letzten {self.aggregation_period} Tage täglich geimpften Personen beträgt {"{:,d}".format(int(sum_tot / self.aggregation_period))}.
+        Personen haben bereits eine zweite Impfung erhalten. Die Rate der über die letzten {self.aggregation_period} Tage geimpften Personen beträgt {"{:,d}".format(int(sum_tot / self.aggregation_period))} pro Tag.
         Davon sind {"{:,d}".format(int(sum_d1 / self.aggregation_period))} pro Tag Erstimpfungen und {"{:,d}".format(int(sum_d2/self.aggregation_period))} pro Tag Zweitimpfungen. Die Linie `{self.herd_immunity_threshold}% Bevölkerung` zeigt die Hürde, bei welcher die Herdenimmunität erreicht ist. 
         Gemäss [BAG](https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/konzeptpapier_3-phasen-modell.pdf.download.pdf/Konzeptpapier_Drei-Phasen-Modell_DE.pdf) liegt dieser Wert bei 80% doch kann er im 
         Navigationsfeld angepasst werden. Die Linie `{self.impfbereite_szenario}` zeigt die, für das Szenario gewählte Altersklasse (Impfberechtigte). Die Linie `Impfwillige` zeigt den, für das Szenario angenommenen Anteil 
@@ -51,10 +51,10 @@ class App:
         """
 
         text['prognose'] = f"""Wenn man die mittlere Impfrate der vergangenen {self.aggregation_period} Tage für Erstimpfungen extrapoliert, so werden am {d1_100pz.strftime('%d.%m.%y')} alle impfwilligen Personen einmal geimpft sein. Nach diesem Zeitpunkt finden 
-        nur noch Zweitimpfungen statt, d.h. die Rate für Zweitimpfungen steigt an. Am {d2_100pz.strftime('%d.%m.%y')} sind alle impfwilligen Personen zum zweiten Mal geimpft. Dabei wird noch nicht berücksichtigt, dass
+        nur noch Zweitimpfungen statt, und die Rate für Zweitimpfungen steigt entsprechend an. Am {d2_100pz.strftime('%d.%m.%y')} sind auch alle impfwilligen Personen zum zweiten Mal geimpft. Dabei wird noch nicht berücksichtigt, dass
         Personen, die bereits an Covid-19 erkrankt waren, nur einmal geimpft werden. 
 
-Um die Herdenimmunität in einer Population zu erreichen, muss ein definierter Prozentsatz der Bevölkerung ({self.herd_immunity_threshold}%) geimpft sein. Dies bedeutet für den Kanton Basel-Stadt, dasss {"{:,d}".format(int(self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100))} Personen geimpft werden müssen. 
+Um die Herdenimmunität in einer Population zu erreichen, muss ein definierter Prozentsatz der Bevölkerung ({self.herd_immunity_threshold}%) immun sein. Dies bedeutet für den Kanton Basel-Stadt, dasss {"{:,d}".format(int(self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100))} Personen geimpft sein müssen. 
         Das gewählte Szenario sieht vor, dass die Altersklassen `{self.impfbereite_szenario}` geimpft werden und von dieser Bevölkerungsschicht lassen sich {self.impfwillige}% impfen. Es können somit maximal {"{:,d}".format(self.impfbereite_eff)} Personen geimpft werden.
         {text_threshold}   
         """
@@ -66,8 +66,6 @@ Um die Herdenimmunität in einer Population zu erreichen, muss ein definierter P
             'anzahl': [self.pop_dic['100% Bevölkerung'], self.pop_dic['100% Bevölkerung'], szenario_value, szenario_value, self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100, self.pop_dic['100% Bevölkerung']*self.herd_immunity_threshold/100],
         }                    
         pop_lines_df = pd.DataFrame(data)
-        st.write(self.impfbereite_szenario)
-
         pop_lines_df['datum'] = pd.to_datetime(pop_lines_df['datum'])
         return pop_lines_df
 
