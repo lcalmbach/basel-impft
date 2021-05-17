@@ -5,11 +5,11 @@ import impfungen_bs
 import info
 import const as cn
 
-__version__ = '0.0.1' 
+__version__ = '0.0.2' 
 __author__ = 'Lukas Calmbach'
 __author_email__ = 'lcalmbach@gmail.com'
-VERSION_DATE = '2021-05-15'
-my_name = 'Basel-impft'
+VERSION_DATE = '2021-05-17'
+my_name = 'Impf-Prognose-BS'
 my_kuerzel = "BS-I"
 GIT_REPO = 'https://github.com/lcalmbach/basel-impft'
 conn = {}
@@ -48,7 +48,7 @@ def main():
         page_icon="💉",
         layout="wide",
         initial_sidebar_state="expanded")
-    st.sidebar.markdown("### 💉 Basel impft")
+    st.sidebar.markdown(f"### 💉 {my_name}")
     data, data_melted = get_data()
     my_app = st.sidebar.selectbox("Menu", options=list(MENU_DIC.keys()),
         format_func=lambda x: MENU_DIC[x])

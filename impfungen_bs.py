@@ -19,6 +19,7 @@ class App:
         self.status_total = int(self.data[self.data['datum'] == self.last_date]['total'])
         self.aggregation_period = 7
         self.impfwillige = 80
+        self.herd_immunity_threshold = 80
         self.pop_dic = self.get_pop_data()
         self.impfbereite_szenario = ''
         self.impfbereite_eff = 0
@@ -27,24 +28,25 @@ class App:
 
     def get_text(self, key:str, sum_d1, sum_d2, sum_tot, d1_100pz, d2_100pz):
         text = {}
-        pop80pct = "{:,d}".format(int(self.pop_dic['100% Bevölkerung'] * 0.8))
+        threshold_herdimm_pct = "{:,d}".format(int(self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100))
 
-        text_threshold = f"""Die Hürde von 80% der Bevölkerung liegt bei {pop80pct} """
+        text_threshold = f"""Die Hürde von {self.herd_immunity_threshold}% der Bevölkerung liegt bei {threshold_herdimm_pct} """
 
-        if self.impfbereite_eff > self.pop_dic['100% Bevölkerung'] * 0.8:
-            text_threshold += f""" und sie wird somit nach Impfen aller Impfbereiten um {"{:,d}".format(int(self.impfbereite_eff - self.pop_dic['100% Bevölkerung'] * 0.8))} überschritten. Es bestehen gute 
-            Chancen, dass die Herdenimmunität erreicht wird.
+        if self.impfbereite_eff > self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100:
+            text_threshold += f""" und sie wird somit nach Impfen aller Impfbereiten um {"{:,d}".format(int(self.impfbereite_eff - self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100))} überschritten. Es bestehen gute 
+            Chancen, dass die Herdenimmunität im Kanton erreicht wird.
             """
         else:
-            text_threshold += f""" und sie wird somit nach Impfen aller impfbereiten Personen um {"{:,d}".format(int(self.impfbereite_eff - self.pop_dic['100% Bevölkerung'] * 0.8))} unterschritten. Zum Erreichen einer 
-            Herdenimmunität müssen weitere Altersklassen für die Impfung zugelassen werden, und/oder der Anteil der Impfwilligen muss erhöht werden. Sie können den benötigten Anteil der
-            impfwilligen Personen eruieren, indem sie den Anteil im Navigationsbereich am linken Rand verändern. 
+            text_threshold += f""" und sie wird somit nach Impfen aller impfbereiten Personen um {"{:,d}".format(int(self.impfbereite_eff - self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100))} unterschritten. Zum Erreichen einer 
+            Herdenimmunität im Kanton müssen weitere Altersklassen für die Impfung zugelassen werden, und/oder der Anteil der Impfwilligen muss erhöht werden. Sie können den benötigten Anteil der
+            impfwilligen Personen eruieren, indem sie deren Anteil im Navigationsbereich am linken Rand erhöhen bis bis dass die Linie der Impfwilligen die Herdenimmunitäts-Linie überdeckt. 
             """
 
-        text['verlauf'] = f"""Es wurden bis heute {self.status_total} Dosen verabreicht, {"{:,d}".format(self.status_dosis1)} Personen wurden einmal geimpft, {"{:,d}".format(self.status_dosis2)} 
+        text['verlauf'] = f"""Es wurden bis heute {"{:,d}".format(self.status_total)} Dosen verabreicht, {"{:,d}".format(self.status_dosis1)} Personen wurden einmal geimpft, {"{:,d}".format(self.status_dosis2)} 
         Personen haben bereits eine zweite Impfung erhalten. Die Rate der über die letzten {self.aggregation_period} Tage täglich geimpften Personen beträgt {"{:,d}".format(int(sum_tot / self.aggregation_period))}.
-        Davon sind {"{:,d}".format(int(sum_d1 / self.aggregation_period))} pro Tag Erstimpfungen und {"{:,d}".format(int(sum_d2/self.aggregation_period))} pro Tag Zweitimpfungen. Die 80% Linie zeigt die Hürde, bei welcher gemäss [BAG](https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/konzeptpapier_3-phasen-modell.pdf.download.pdf/Konzeptpapier_Drei-Phasen-Modell_DE.pdf) 
-        eine Herdenimmunität der Bevölkerung erreicht werden sollte. Die Linie `{self.impfbereite_szenario}` zeigt die, für das Szenario gewählte Altersklasse (Impfberechtigte). Die Linie `Impfwillige` zeigt den, für das Szenario angenommenen Anteil 
+        Davon sind {"{:,d}".format(int(sum_d1 / self.aggregation_period))} pro Tag Erstimpfungen und {"{:,d}".format(int(sum_d2/self.aggregation_period))} pro Tag Zweitimpfungen. Die Linie `{self.herd_immunity_threshold}% Bevölkerung` zeigt die Hürde, bei welcher die Herdenimmunität erreicht ist. 
+        Gemäss [BAG](https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/konzeptpapier_3-phasen-modell.pdf.download.pdf/Konzeptpapier_Drei-Phasen-Modell_DE.pdf) liegt dieser Wert bei 80% doch kann er im 
+        Navigationsfeld angepasst werden. Die Linie `{self.impfbereite_szenario}` zeigt die, für das Szenario gewählte Altersklasse (Impfberechtigte). Die Linie `Impfwillige` zeigt den, für das Szenario angenommenen Anteil 
         der Personen, die sich impfen lassen wollen ({self.impfwillige}%).
         """
 
@@ -52,29 +54,32 @@ class App:
         nur noch Zweitimpfungen statt, d.h. die Rate für Zweitimpfungen steigt an. Am {d2_100pz.strftime('%d.%m.%y')} sind alle impfwilligen Personen zum zweiten Mal geimpft. Dabei wird noch nicht berücksichtigt, dass
         Personen, die bereits an Covid-19 erkrankt waren, nur einmal geimpft werden. 
 
-Um eine Herdenimmunität in der Bevölkerung zu erreichen, sollten mindestens 80% der Bevölkerung ({pop80pct}) geimpft sein. Das gewählte Szenario sieht vor, dass
-        nur die Altersklassen `{self.impfbereite_szenario}` geimpft werden und von dieser Bevölkerungsschicht lassen sich {self.impfwillige}% impfen. Es können somit maximal {"{:,d}".format(self.impfbereite_eff)} Personen geimpft werden.
+Um die Herdenimmunität in einer Population zu erreichen, muss ein definierter Prozentsatz der Bevölkerung ({self.herd_immunity_threshold}%) geimpft sein. Dies bedeutet für den Kanton Basel-Stadt, dasss {"{:,d}".format(int(self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100))} Personen geimpft werden müssen. 
+        Das gewählte Szenario sieht vor, dass die Altersklassen `{self.impfbereite_szenario}` geimpft werden und von dieser Bevölkerungsschicht lassen sich {self.impfwillige}% impfen. Es können somit maximal {"{:,d}".format(self.impfbereite_eff)} Personen geimpft werden.
         {text_threshold}   
         """
         return text[key]
 
     def get_threshold_lines(self, min_date, max_date, szenario_name, szenario_value):
-        data = {'datum': [min_date, max_date, min_date, max_date,min_date, max_date],
-            'parameter':[szenario_name,szenario_name,'100% Bevölkerung','100% Bevölkerung', '80% Bevölkerung', '80% Bevölkerung'],
-            'anzahl': [szenario_value, szenario_value, self.pop_dic['100% Bevölkerung'], self.pop_dic['100% Bevölkerung'], self.pop_dic['100% Bevölkerung'] * 0.8, self.pop_dic['100% Bevölkerung']*0.8],
-            }
+        data = {'datum': [min_date, max_date, min_date, max_date, min_date, max_date],
+            'parameter':['100% Bevölkerung','100% Bevölkerung',szenario_name,szenario_name,f'{self.herd_immunity_threshold}% der Bevölkerung', f'{self.herd_immunity_threshold}% der Bevölkerung'],
+            'anzahl': [self.pop_dic['100% Bevölkerung'], self.pop_dic['100% Bevölkerung'], szenario_value, szenario_value, self.pop_dic['100% Bevölkerung'] * self.herd_immunity_threshold/100, self.pop_dic['100% Bevölkerung']*self.herd_immunity_threshold/100],
+        }                    
         pop_lines_df = pd.DataFrame(data)
-        pop_lines_df['datum'] = pd.to_datetime(pop_lines_df['datum'] )
+        st.write(self.impfbereite_szenario)
+
+        pop_lines_df['datum'] = pd.to_datetime(pop_lines_df['datum'])
         return pop_lines_df
 
     def get_pop_data(self):
-        pop_dic = dict({'>9-Jährige':177279,'>19-Jährige':161875,'100% Bevölkerung':195844,'80% Bevölkerung':195844 * 0.8},)
-        
+        pop_dic = dict({'>9-Jährige':177279,'>19-Jährige':161875,'100% Bevölkerung':195844,f'{self.herd_immunity_threshold}% Bevölkerung':195844 * self.herd_immunity_threshold/100},)
+        pop_dic['Alle Altersklassen']= pop_dic['100% Bevölkerung']
         return pop_dic
 
     def time_series_plot(self, df: pd.DataFrame, df_prognose, df_thresholds):
         df = self.data_melted.replace('dosis1', '1x geimpft')
         df = df.replace('dosis2', '2x geimpft')
+        df = df.replace('total', 'Total verimpfte Dosen')
         df = df.rename(columns={'parameter': 'Verlauf'})
         chart = alt.Chart(df).mark_line().encode(
             x= alt.X('datum:T'),
@@ -85,20 +90,20 @@ Um eine Herdenimmunität in der Bevölkerung zu erreichen, sollten mindestens 80
         
         df = df_thresholds.rename(columns={'parameter':'Bevölkerung'})
         df = df.replace(self.impfbereite_szenario, f"{self.impfwillige}%  der {self.impfbereite_szenario}")
-        thresholds = alt.Chart(df).mark_line().encode(
+        thresholds = alt.Chart(df).mark_line(size=2).encode(
             x='datum', 
             y='anzahl', 
-            color = "Bevölkerung",
+            color=alt.Color('Bevölkerung', scale=alt.Scale(scheme='bluepurple')),
             tooltip=['datum','Bevölkerung','anzahl']    
         )
 
         df = df_prognose.replace('dosis1', '1x geimpft')
         df = df.replace('dosis2', '2x geimpft')
         df = df.rename(columns={'parameter': 'Prognose'})
-        prog = alt.Chart(df).mark_circle(point=True,).encode(
+        prog = alt.Chart(df).mark_circle(point=True,size=5).encode(
             x='datum', 
             y='anzahl', 
-            color = "Prognose",
+            color='Prognose'
         )
 
         return (chart + prog + thresholds).resolve_scale(
@@ -160,14 +165,15 @@ Um eine Herdenimmunität in der Bevölkerung zu erreichen, sollten mindestens 80
 
         sum_d1, sum_d2, sum_tot = self.get_summe_7d()
         
-        self.impfbereite_szenario = st.sidebar.selectbox('Impfberechtigte', ['>9-Jährige', '>19-Jährige', '100% Bevölkerung'])
-        self.impfwillige = st.sidebar.slider('Impfwillige', 0,100, self.impfwillige)
+        self.impfbereite_szenario = st.sidebar.selectbox('Impfberechtigte', ['>9-Jährige', '>19-Jährige', 'Alle Altersklassen'])
+        self.impfwillige = st.sidebar.slider('Impfwillige', 0, 100, self.impfwillige)
         self.impfbereite_eff = int(self.pop_dic[self.impfbereite_szenario] * self.impfwillige / 100)
         df_prognose,d1_100pz, d2_100pz = self.calc_model(sum_d1, sum_d2, sum_tot, self.impfbereite_eff)
+        self.herd_immunity_threshold = st.sidebar.slider('Hürde Herdenimmunität (% Bevölkerung)', 50, 100, self.herd_immunity_threshold)
         df_thresholds = self.get_threshold_lines(self.first_date, d2_100pz, self.impfbereite_szenario, self.impfbereite_eff)
         chart = self.time_series_plot(self.data_melted, df_prognose, df_thresholds)
         
-        st.markdown("## Verlauf und Prognose der Impfungen in Basel-Stadt")
+        st.markdown("## Verlauf und Prognose der Impfungen im Kanton Basel-Stadt")
         st.markdown("### Verlauf")
         st.markdown(self.get_text('verlauf', sum_d1, sum_d2, sum_tot, d1_100pz, d2_100pz))
         st.altair_chart(chart, use_container_width=True)
