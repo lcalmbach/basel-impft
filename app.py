@@ -1,14 +1,16 @@
 import pandas as pd
 import streamlit as st
+import requests
+import datetime
 
 import impfungen_bs
 import info
 import const as cn
 
-__version__ = '0.0.2' 
+__version__ = '0.0.3' 
 __author__ = 'Lukas Calmbach'
 __author_email__ = 'lcalmbach@gmail.com'
-VERSION_DATE = '2021-05-17'
+VERSION_DATE = '2021-05-19'
 my_name = 'Impf-Prognose-BS'
 my_kuerzel = "BS-I"
 GIT_REPO = 'https://github.com/lcalmbach/basel-impft'
@@ -21,8 +23,24 @@ APP_INFO = f"""<div style="background-color:powderblue; padding: 10px;border-rad
     """
 MENU_DIC = {info: 'Info', impfungen_bs: 'Zeitreihen'}
 
+
 @st.cache()
-def get_data():
+def get_bev_data():
+    data = pd.read_csv('bev_bs_alter_100128.csv', sep=';')
+    return data
+
+def create_bev_data():
+    data = pd.read_csv('100128.csv', sep=';')
+    result = pd.DataFrame(columns=['alter','anzahl'])
+    for i in range (0,110):
+        a = data[data['Alter']>=i].loc[:, 'Anzahl'].sum()
+        result = result.append({'alter':i,'anzahl':a}, ignore_index=True)
+    result.to_csv('bev_bs_alter_100128.csv', sep=';', index=False)
+    return result
+    
+
+@st.cache()
+def get_impf_data():
     data = pd.read_csv(cn.DATA_URL, sep = ";")
     fields =['Datum',
             'Total verabreichte Impfungen',
@@ -49,10 +67,11 @@ def main():
         layout="wide",
         initial_sidebar_state="expanded")
     st.sidebar.markdown(f"### 💉 {my_name}")
-    data, data_melted = get_data()
+    data, data_melted = get_impf_data()
+    bev = get_bev_data()
     my_app = st.sidebar.selectbox("Menu", options=list(MENU_DIC.keys()),
         format_func=lambda x: MENU_DIC[x])
-    app = my_app.App(data, data_melted)
+    app = my_app.App(data, data_melted, bev)
     app.show_menu()
     st.sidebar.markdown(APP_INFO, unsafe_allow_html=True)
 if __name__ == "__main__":
