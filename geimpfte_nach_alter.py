@@ -66,19 +66,20 @@ class App:
         st.write(text)
 
     def get_fig(self):
-        lst=['16-49','50-64','> 74','Unbekannt']
+        lst=['16-49','50-64','65-74','> 74','Unbekannt']
         df = self.data_age[(self.data_age['Altersgruppe'].isin(lst) & (self.data_age['Impftyp Beschreibung']==self.impf_typ))]
         chart = alt.Chart(df).mark_area().encode(
-            x= alt.X('Impfdatum:T'),
-            y= alt.Y('Anzahl Kumuliert:Q'), 
+            x= alt.X('Impfdatum:T', title=''),
+            y= alt.Y('Anzahl Kumuliert:Q',title=self.impf_typ + ' kumuliert'), 
             color = "Altersgruppe",
-            tooltip=['Impfdatum','Altersgruppe','Anzahl', 'Anzahl Kumuliert']    
+            tooltip=['Impfdatum','Impftyp Beschreibung','Altersgruppe','Anzahl', 'Anzahl Kumuliert']    
         ).properties(width=1000, height = 600)
         
         return chart
 
     def prepare_data(self):
         lst_altersklassen = ['Gesamtbevölkerung','16-49', '50-64', '65-74', '> 74', 'Unbekannt']
+        st.write(self.data_age)
         self.altersklasse = st.sidebar.selectbox("Altersklasse", options=lst_altersklassen)
         df = self.data_age[(self.data_age['Altersgruppe']==self.altersklasse) & (self.data_age['Impftyp'].isin([1,2]))]
         df = df[['Impfdatum','Anzahl','Impftyp Beschreibung']]
