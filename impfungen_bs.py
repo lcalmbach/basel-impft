@@ -8,7 +8,8 @@ import datetime as dt
 import locale
 
 class App:
-    def __init__(self, data, data_melted, bev):
+    def __init__(self, data, data_melted, bev, data_age):
+        self.data_age = data_age
         self.data = data
         self.data_melted = data_melted
         self.bev_df = bev
@@ -138,10 +139,13 @@ Um die Herdenimmunität in einer Population zu erreichen, muss ein definierter P
         tot = self.get_value(self.last_date,'total')
 
         sim_date = self.last_date 
-        # vaccinate peoople at current frequency until all got vaccinated for the first time
+        # vaccinate peoople at current frequency until all are vaccinated for the first time
         while d1 <= limit:
-            d1 += rate_d1
-            d2 += rate_d2
+            if d2 + rate_d2 < limit and d1 + rate_d1 > d2 + rate_d2:
+                d1 += rate_d1
+                d2 += rate_d2
+            else:
+                d1 += rate_tot
             tot += rate_tot
             sim_date += dt.timedelta(1)
             df = df.append({'datum':sim_date,'parameter': 'dosis1', 'anzahl': d1}, ignore_index=True)

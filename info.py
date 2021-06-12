@@ -4,7 +4,8 @@ import streamlit as st
 
 
 class App:
-    def __init__(self, data, data_melted, bev):
+    def __init__(self, data, data_melted, bev, data_age):
+        self.data_age = data_age
         self.data = data
         self.data_melted = data_melted
         self.bev_df = bev

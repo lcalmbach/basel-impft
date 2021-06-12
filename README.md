@@ -8,7 +8,7 @@ This applicaton allows to estimate the current status of covid-19 vaccinations o
 The application is implemented in Python and uses the framework [streamlit](https://streamlit.io/) and [altair](https://altair-viz.github.io/).
 
 ## Installation
-Impf-Prognose-BS can be launched from [impf-prognose-bs](https://impf-prognose-bs.herokuapp.com/). To install the program locally, Python 3.6 or newer must be installed on your target machine. Proceed as follows:
+Impf-Prognose-BS can be launched from [impf-prognose-bs](https://impf-prognose-bs.herokuapp.com/). To install the program locally, Python 3.6 or newer (y 3.9) must be installed on your target machine. Proceed as follows:
 
 ```
 > git clone https://github.com/lcalmbach/basel-impft.git
@@ -17,5 +17,5 @@ Impf-Prognose-BS can be launched from [impf-prognose-bs](https://impf-prognose-b
 > env\scripts\activate.bat
 > pip install -r requirements.txt
 > streamlit run app.py
-```` 
+``` 
 
