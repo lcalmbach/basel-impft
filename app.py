@@ -6,6 +6,7 @@ import datetime
 import impfungen_bs
 import info
 import geimpfte_nach_alter
+import impfrate
 import const as cn
 
 __version__ = '0.0.5' 

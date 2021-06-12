@@ -23,8 +23,9 @@ Diese Applikation basiert - wie jedes Modell - auf vereinfachenden Annahmen und 
 
 ### Datenquellen und weitere Informationen zum Thema Covid-19-Impfung
 - [Imfdaten, opendata.bs](https://data.bs.ch/explore/dataset/100111/information/?sort=datum)
+- [Coronavirus (Covid-19): Erweiterte Daten zu Impfungen nach Altersgruppe, opendata.bs](https://data.bs.ch/explore/dataset/100137/table/?disjunctive.age_group&disjunctive.vacc_count&disjunctive.vacc_count_description&sort=vacc_day)
 - [Bevölkerung nach Alter, opendata.bs](https://data.bs.ch/explore/dataset/100128/information/?sort=jahr).
-- [Coronavirus: Covid-19 Impfung](https://www.bag.admin.ch/bag/de/home/krankheiten/ausbrueche-epidemien-pandemien/aktuelle-ausbrueche-epidemien/novel-cov/information-fuer-die-aerzteschaft/covid-19-impfung.html)
+- [Coronavirus: Covid-19 Impfung, BAG](https://www.bag.admin.ch/bag/de/home/krankheiten/ausbrueche-epidemien-pandemien/aktuelle-ausbrueche-epidemien/novel-cov/information-fuer-die-aerzteschaft/covid-19-impfung.html)
 - [Impf-Dashboard BAG](https://www.covid19.admin.ch/de/epidemiologic/vacc-doses)
 """
 
