@@ -23,7 +23,6 @@ class App:
         max_datum = self.data_age['Impfdatum'].max()
         st.markdown(f"### Geimpfte nach Altersgruppen, Stand {max_datum.strftime('%d.%m.%Y')}")
         df = self.data_age[self.data_age['Impfdatum']==max_datum]
-        # st.write(df)
         summary_df = pd.DataFrame(data={},columns=['Altersgruppe', 'Erstimpfung', 'Erstimpfung kumuliert', 'Zweitimpfung','Zweitimpfung kumuliert','Bevölkerungszahl','Anteil der Geimpften', 'sort'])
         for alter in df['Altersgruppe'].unique():
             first = df[(df['Altersgruppe']==alter) & (df['Impftyp']==1)]['Anzahl'].iloc[0]
@@ -79,7 +78,6 @@ class App:
 
     def prepare_data(self):
         lst_altersklassen = ['Gesamtbevölkerung','16-49', '50-64', '65-74', '> 74', 'Unbekannt']
-        st.write(self.data_age)
         self.altersklasse = st.sidebar.selectbox("Altersklasse", options=lst_altersklassen)
         df = self.data_age[(self.data_age['Altersgruppe']==self.altersklasse) & (self.data_age['Impftyp'].isin([1,2]))]
         df = df[['Impfdatum','Anzahl','Impftyp Beschreibung']]
