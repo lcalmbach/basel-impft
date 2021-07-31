@@ -19,7 +19,7 @@ class App:
         self.impf_typ = ''
 
     def status_summary(self):
-        sort_gruppen = {'16-49':1, '50-64':2, '65-74':3, '> 74':4, 'Unbekannt':5, 'Impfberechtigte Bevölkerung': 6, 'Gesamtbevölkerung':7}
+        sort_gruppen = {'12-15':0,'16-49':1, '50-64':2, '65-74':3, '> 74':4, 'Unbekannt':5, 'Impfberechtigte Bevölkerung': 6, 'Gesamtbevölkerung':7}
         max_datum = self.data_age['Impfdatum'].max()
         st.markdown(f"### Geimpfte nach Altersgruppen, Stand {max_datum.strftime('%d.%m.%Y')}")
         df = self.data_age[self.data_age['Impfdatum']==max_datum]
@@ -56,16 +56,14 @@ class App:
         kum_pzt = df[(df['Altersgruppe']=='Gesamtbevölkerung') & (df['Impftyp']==1)]['Anteil der Geimpften'].iloc[0]
         kum_pzt = "{:,.1f}".format(kum_pzt)
         kum_impfwillige_pzt = df[(df['Altersgruppe']=='Impfberechtigte Bevölkerung') & (df['Impftyp']==1)]['Anteil der Geimpften'].iloc[0]
-        kum_impfwillige_pzt = "{:,.1f}".format(kum_impfwillige_pzt)
-
-        text = f"""Am {max_datum.strftime('%d.%m.%Y')} wurden Total {int(erstimpf + zweitimpf)} Dosen verimpft; Davon waren {erstimpf} 
-        Erstimpfungen und {zweitimpf} Zweitimpfungen. Es wurden bis zu diesem Tag {kum_erstimpf + kum_zweitimpf} Personen mindestens einmal geimpft, davon haben {kum_zweitimpf} bereits ihre Zweitimpfung erhalten.
-        Somit sind heute {kum_pzt}% der Gesamtbevölkerung und {kum_impfwillige_pzt}% der Impfberechtigten (Bevölkerung ab 16 Jahre) mindestens einmal geimpft. 
+        text = f"""Am {max_datum.strftime('%d.%m.%Y')} wurden Total {erstimpf + zweitimpf :,.0f} Dosen verimpft; Davon waren {erstimpf :,.0f} 
+        Erstimpfungen und {zweitimpf :,.0f} Zweitimpfungen. Es wurden bis zu diesem Tag {kum_erstimpf + kum_zweitimpf :,.0f} Personen mindestens einmal geimpft, davon haben {kum_zweitimpf :,.0f} bereits ihre Zweitimpfung erhalten.
+        Somit sind heute {kum_pzt}% der Gesamtbevölkerung und {kum_impfwillige_pzt :,.1f}% der Impfberechtigten (Bevölkerung ab 16 Jahre) mindestens einmal geimpft. 
         """
         st.write(text)
 
     def get_fig(self):
-        lst=['16-49','50-64','65-74','> 74','Unbekannt']
+        lst=['12.15','16-49','50-64','65-74','> 74','Unbekannt']
         df = self.data_age[(self.data_age['Altersgruppe'].isin(lst) & (self.data_age['Impftyp Beschreibung']==self.impf_typ))]
         chart = alt.Chart(df).mark_area().encode(
             x= alt.X('Impfdatum:T', title=''),
