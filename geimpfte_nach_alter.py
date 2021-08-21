@@ -63,7 +63,7 @@ class App:
         st.write(text)
 
     def get_fig(self):
-        lst=['12.15','16-49','50-64','65-74','> 74','Unbekannt']
+        lst=['12-15','16-49','50-64','65-74','> 74','Unbekannt']
         df = self.data_age[(self.data_age['Altersgruppe'].isin(lst) & (self.data_age['Impftyp Beschreibung']==self.impf_typ))]
         chart = alt.Chart(df).mark_area().encode(
             x= alt.X('Impfdatum:T', title=''),

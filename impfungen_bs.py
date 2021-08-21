@@ -13,7 +13,7 @@ class App:
         self.data = data
         self.data_melted = data_melted
         self.bev_df = bev
-        self.bev_total = bev[bev['alter']==0]['anzahl']
+        self.bev_total = bev[bev['alter']==0]['anzahl'][0]
         
         self.first_date = self.data['datum'].min()
         self.last_date = self.data['datum'].max()
@@ -49,8 +49,10 @@ class App:
             """
 
         text['verlauf'] = f"""Es wurden bis heute {"{:,d}".format(self.status_total)} Dosen verabreicht, {"{:,d}".format(self.status_dosis1)} Personen wurden einmal geimpft, {"{:,d}".format(self.status_dosis2)} 
-        Personen haben bereits eine zweite Impfung erhalten. Die Rate der über die letzten {self.aggregation_period} Tage geimpften Personen beträgt {"{:,d}".format(int(sum_tot / self.aggregation_period))} pro Tag.
-        Davon sind {"{:,d}".format(int(sum_d1 / self.aggregation_period))} pro Tag Erstimpfungen und {"{:,d}".format(int(sum_d2/self.aggregation_period))} pro Tag Zweitimpfungen. Die Linie `{self.herd_immunity_threshold}% Bevölkerung` zeigt die Hürde, bei welcher die Herdenimmunität erreicht ist. 
+        Personen haben bereits eine zweite Impfung erhalten. {self.status_dosis2 / self.bev_total :.1%} der Basler Bevölkerung sind somit vollständig geimpft. Die Rate der über die letzten {self.aggregation_period} Tage geimpften Personen beträgt {"{:,d}".format(int(sum_tot / self.aggregation_period))} pro Tag.
+        Davon sind {"{:,d}".format(int(sum_d1 / self.aggregation_period))} pro Tag Erstimpfungen und {"{:,d}".format(int(sum_d2/self.aggregation_period))} pro Tag Zweitimpfungen.
+        
+Die Linie `{self.herd_immunity_threshold}% Bevölkerung` zeigt die Hürde, bei welcher die Herdenimmunität erreicht ist. 
         Gemäss [BAG](https://www.bag.admin.ch/dam/bag/de/dokumente/mt/k-und-i/aktuelle-ausbrueche-pandemien/2019-nCoV/konzeptpapier_3-phasen-modell.pdf.download.pdf/Konzeptpapier_Drei-Phasen-Modell_DE.pdf) liegt dieser Wert bei 80% doch kann er im 
         Navigationsfeld angepasst werden. Die Linie `>{self.zugelassene_alter}-Jährige` zeigt die, für das Szenario gewählte Altersklasse (Impfberechtigte = {"{:,d}".format(self.zugelassene_num)}). Die Linie `Impfwillige` zeigt den, für das Szenario angenommenen Anteil 
         der Personen, die sich impfen lassen wollen ({self.impfwillige}%).
@@ -83,7 +85,7 @@ Um die Herdenimmunität in einer Population zu erreichen, muss ein definierter P
         df = df.rename(columns={'parameter': 'Verlauf'})
         chart = alt.Chart(df).mark_line().encode(
             x= alt.X('datum:T'),
-            y= alt.Y('anzahl:Q', scale=alt.Scale(domain=(0,200000))), 
+            y= alt.Y('anzahl:Q', scale=alt.Scale(domain=(0,300000))), 
             color = "Verlauf",
             tooltip=['datum','Verlauf','anzahl']    
         )
